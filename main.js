@@ -9,6 +9,13 @@ function Book(title, author, pages, status){
     this.pages = pages
     this.status = status
     this.id = crypto.randomUUID()
+    this.toggleRead = function(){
+        if(this.status === "Read"){
+            this.status = "Unread"
+        } else {
+            this.status = "Read"
+        }
+    }
 }
 
 function addBookToLibrary(title, author, pages, status){
@@ -23,6 +30,28 @@ function deleteBook(bookId){
     if (bookElement) {
         bookElement.remove();
     }
+}
+
+function addBookToLocal(book) {
+    const library = JSON.parse(localStorage.getItem("myLibrary")) || [];
+    library.push(book);
+    localStorage.setItem("myLibrary", JSON.stringify(library));
+}
+
+function deleteBookLocal(bookTitle){
+    const library = JSON.parse(localStorage.getItem("myLibrary")) || [];
+    const updatedLibrary = library.filter((book) => book.title !== bookTitle);
+    localStorage.setItem("myLibrary", JSON.stringify(updatedLibrary));
+}
+
+function loadBooksFromLocal() {
+    const library = JSON.parse(localStorage.getItem("myLibrary")) || [];
+    library.forEach((bookData) => {
+        const book = new Book(bookData.title, bookData.author, bookData.pages, bookData.status);
+        book.id = bookData.id; // Preserve the unique ID
+        myLibrary.push(book);
+        displayBook(book);
+    });
 }
 
 function displayBook(book){
@@ -51,9 +80,17 @@ function displayBook(book){
     deleteButton.textContent = "Delete";
     deleteButton.addEventListener("click", () => {
         deleteBook(book.id);
+        deleteBookLocal(book.title)
     });
     bookDiv.appendChild(deleteButton);
 
+    const readToggleBtn = document.createElement("button")
+    readToggleBtn.textContent = "Toggle read"
+    readToggleBtn.addEventListener('click', () => {
+        book.toggleRead()
+        status.textContent = `Status: ${book.status}`;
+    })
+    bookDiv.appendChild(readToggleBtn);
     container.appendChild(bookDiv);
 }
 
@@ -63,6 +100,12 @@ function addNewBook(e){
     const data = new FormData(e.target);
     const value = Object.fromEntries(data.entries());
     const newBook = addBookToLibrary(value.title, value.author, parseInt(value.pages), value.status)
+    addBookToLocal(newBook)
     displayBook(newBook)
 }
+
 form.addEventListener('submit', addNewBook)
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadBooksFromLocal();
+});
