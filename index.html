@@ -6,6 +6,22 @@
     <title>Document</title>
 </head>
 <body>
+    <form>
+        <label for="title">Title of the book</label>
+        <input required type="text" name="title" id="title">
+
+        <label for="author">Author of the book</label>
+        <input required type="text" name="author" id="author">
+
+        <label for="pages">Number of pages</label>
+        <input required type="number" name="pages" id="pages">
+
+        <span>Have you read it?</span>
+        <input required type="radio" id="status" name="status" value="Read" checked /> Read
+        <input required type="radio" name="status" value="Unread" /> Did not read
+
+        <button type="submit">Submit</button>
+    </form>
     <div class="container"></div>
 </body>
 </html>
