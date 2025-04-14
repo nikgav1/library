@@ -54,6 +54,17 @@ function loadBooksFromLocal() {
     });
 }
 
+function toggleReadLocal(bookId) {
+    const library = JSON.parse(localStorage.getItem("myLibrary")) || [];
+    const updatedLibrary = library.map((book) => {
+        if (book.id === bookId) {
+            book.status = book.status === "Read" ? "Unread" : "Read";
+        }
+        return book;
+    });
+    localStorage.setItem("myLibrary", JSON.stringify(updatedLibrary));
+}
+
 function displayBook(book){
     const bookDiv = document.createElement("div");
     bookDiv.classList.add("book");
@@ -88,6 +99,7 @@ function displayBook(book){
     readToggleBtn.textContent = "Toggle read"
     readToggleBtn.addEventListener('click', () => {
         book.toggleRead()
+        toggleReadLocal(book.id)
         status.textContent = `Status: ${book.status}`;
     })
     bookDiv.appendChild(readToggleBtn);
